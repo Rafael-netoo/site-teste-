@@ -270,11 +270,22 @@ let docentes = [];
 
 async function carregarDados(){
 
-  const response = await fetch('dados.json');
+  try {
 
-  docentes = await response.json();
+    const response = await fetch('dados.json');
 
-  carregarTabela(docentes);
+    docentes = await response.json();
+
+    console.log(docentes);
+
+    carregarTabela(docentes);
+
+  } catch(error){
+
+    console.error("Erro ao carregar JSON:", error);
+
+  }
+
 }
 
 function carregarTabela(lista){
@@ -291,12 +302,12 @@ function carregarTabela(lista){
 
     const linha = `
       <tr>
-        <td>${docente.nome}</td>
-        <td>${docente.citacoes}</td>
-        <td>${docente.hindex}</td>
-        <td>${docente.publicacoes}</td>
-        <td>${docente.tempo}</td>
-        <td>${docente.impacto}</td>
+        <td>${docente.nome || ""}</td>
+        <td>${docente.citacoes || 0}</td>
+        <td>${docente.hindex || 0}</td>
+        <td>${docente.publicacoes || 0}</td>
+        <td>${docente.tempo || 0}</td>
+        <td>${docente.impacto || 0}</td>
       </tr>
     `;
 
@@ -313,9 +324,12 @@ function filtrarTabela(){
     .value
     .toLowerCase();
 
-  const filtrados = docentes.filter(docente =>
-    docente.nome.toLowerCase().includes(valor)
-  );
+  const filtrados = docentes.filter(docente => {
+
+    return docente.nome &&
+      docente.nome.toLowerCase().includes(valor);
+
+  });
 
   carregarTabela(filtrados);
 
