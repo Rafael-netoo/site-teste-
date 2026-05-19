@@ -35,24 +35,24 @@
       "data_file": "dados_ufpe.json",
       "n_docentes": 2107,
       "cobertura": {
-        "citacoes": 0,
-        "h_index": 0,
+        "citacoes": 1976,
+        "h_index": 1976,
         "publicacoes": 1977
       },
       "totais": {
-        "citacoes": 0,
-        "publicacoes": 55950
+        "citacoes": 1117648,
+        "publicacoes": 55981
       },
       "medias": {
-        "citacoes": null,
-        "h_index": null,
-        "publicacoes": 28.3,
+        "citacoes": 565.6,
+        "h_index": 7.5,
+        "publicacoes": 28.32,
         "tempo_carreira": 19.4
       },
       "max": {
-        "citacoes": null,
-        "h_index": null,
-        "publicacoes": 591
+        "citacoes": 19627,
+        "h_index": 70,
+        "publicacoes": 592
       }
     },
     {
@@ -62,24 +62,24 @@
       "data_file": "dados_upe.json",
       "n_docentes": 459,
       "cobertura": {
-        "citacoes": 0,
-        "h_index": 0,
-        "publicacoes": 0
+        "citacoes": 356,
+        "h_index": 356,
+        "publicacoes": 356
       },
       "totais": {
-        "citacoes": 0,
-        "publicacoes": 0
+        "citacoes": 157047,
+        "publicacoes": 7534
       },
       "medias": {
-        "citacoes": null,
-        "h_index": null,
-        "publicacoes": null,
+        "citacoes": 441.1,
+        "h_index": 5.98,
+        "publicacoes": 21.16,
         "tempo_carreira": 15.6
       },
       "max": {
-        "citacoes": null,
-        "h_index": null,
-        "publicacoes": null
+        "citacoes": 24843,
+        "h_index": 44,
+        "publicacoes": 374
       }
     }
   ]
