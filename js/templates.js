@@ -290,6 +290,129 @@ ORDER BY DESC(?n_docentes) ?nm_programa`;
     },
   },
 
+  // ─── CROSS-ICT ─────────────────────────────────────────────────────────
+
+  {
+    id: 'comparar-icts',
+    title: 'Comparativo lado a lado por ICT',
+    examples: [
+      'comparar as 3 ICTs',
+      'tabela comparativa por ICT',
+      'médias e totais por ICT',
+    ],
+    match(q) {
+      const cmp = anyKw(q, ['comparar', 'comparativ', 'lado a lado', 'tabela']);
+      const ict = anyKw(q, ['ict', 'icts', 'institui', '3 ict', 'três ict', 'tres ict']);
+      const porIct = /por\s+icts?/i.test(q);
+      return (cmp && ict) || porIct ? { slots: {} } : null;
+    },
+    build() {
+      return `${PREFIX}
+SELECT ?sigla_ict ?nm_ict
+       (COUNT(DISTINCT ?docente)      AS ?n_docentes)
+       (COUNT(DISTINCT ?ppg)          AS ?n_ppgs)
+       (AVG(?h_index)                 AS ?media_h)
+       (MAX(?h_index)                 AS ?max_h)
+       (AVG(?citation_count)          AS ?media_citacoes)
+       (SUM(?document_count)          AS ?total_publicacoes)
+       (SUM(?citation_count)          AS ?total_citacoes)
+WHERE {
+  ?docente a cti:Docente ;
+           cti:h_index        ?h_index ;
+           cti:citation_count ?citation_count ;
+           cti:document_count ?document_count ;
+           cti:vinculado_a    ?ppg .
+  ?ppg cti:sediado_em ?ict .
+  ?ict cti:sg_entidade_ensino  ?sigla_ict ;
+       cti:nm_entidade_ensino  ?nm_ict .
+}
+GROUP BY ?sigla_ict ?nm_ict
+ORDER BY DESC(?media_h)`;
+    },
+  },
+
+  {
+    id: 'docentes-cross-ict',
+    title: 'Docentes em PPGs de múltiplas ICTs',
+    examples: [
+      'docentes em mais de uma ICT',
+      'quem atua em UFPE e UFRPE',
+      'docentes cross-ICT',
+    ],
+    match(q) {
+      const ql = q.toLowerCase();
+      const peopleKw = anyKw(q, ['docente', 'quem', 'pesquisador', 'professor']);
+      const numSiglas = (q.toUpperCase().match(/\b(UFRPE|UFPE|UPE)\b/g) || []).length;
+      const crossKw =
+        /mais\s+de\s+uma\s+icts?/.test(ql) ||
+        /v[aá]rias\s+icts?/.test(ql) ||
+        /duas\s+icts?/.test(ql) ||
+        /m[uú]ltiplas\s+icts?/.test(ql) ||
+        /cross[-\s]?ict/.test(ql) ||
+        numSiglas >= 2;
+      return (peopleKw && crossKw) ? { slots: {} } : null;
+    },
+    build() {
+      return `${PREFIX}
+SELECT ?nome ?h_index ?citation_count
+       (COUNT(DISTINCT ?ict) AS ?num_icts)
+       (GROUP_CONCAT(DISTINCT ?sigla_ict ; separator=" + ") AS ?icts)
+WHERE {
+  ?docente a cti:Docente ;
+           cti:nm_docente     ?nome ;
+           cti:h_index        ?h_index ;
+           cti:citation_count ?citation_count ;
+           cti:vinculado_a    ?ppg .
+  ?ppg cti:sediado_em ?ict .
+  ?ict cti:sg_entidade_ensino ?sigla_ict .
+}
+GROUP BY ?nome ?h_index ?citation_count
+HAVING (COUNT(DISTINCT ?ict) >= 2)
+ORDER BY DESC(?num_icts) DESC(?h_index)
+LIMIT 50`;
+    },
+  },
+
+  {
+    id: 'areas-cross-ict',
+    title: 'Áreas presentes em múltiplas ICTs',
+    examples: [
+      'áreas nas 3 ICTs',
+      'áreas compartilhadas entre ICTs',
+      'áreas em mais de uma ICT',
+    ],
+    match(q) {
+      const ql = q.toLowerCase();
+      const areaKw = anyKw(q, ['área', 'areas', 'áreas', 'area']);
+      const crossKw =
+        anyKw(q, [
+          'compartilh', 'mais de uma ict', 'várias ict', 'varias ict',
+          'múltiplas ict', 'multiplas ict', 'nas 3 ict', 'nas três ict',
+          'nas tres ict', '3 ict', 'três ict', 'tres ict',
+        ]) || /cross[-\s]?ict/.test(ql);
+      return (areaKw && crossKw) ? { slots: {} } : null;
+    },
+    build() {
+      return `${PREFIX}
+SELECT ?area
+       (COUNT(DISTINCT ?ict)     AS ?num_icts)
+       (COUNT(DISTINCT ?docente) AS ?num_docentes)
+       (AVG(?h_index)            AS ?media_h)
+       (GROUP_CONCAT(DISTINCT ?sigla_ict ; separator=", ") AS ?icts)
+WHERE {
+  ?docente a cti:Docente ;
+           cti:h_index     ?h_index ;
+           cti:vinculado_a ?ppg .
+  ?ppg cti:nm_area_conhecimento ?area ;
+       cti:sediado_em            ?ict .
+  ?ict cti:sg_entidade_ensino ?sigla_ict .
+}
+GROUP BY ?area
+HAVING (COUNT(DISTINCT ?ict) >= 2)
+ORDER BY DESC(?num_icts) DESC(?num_docentes)`;
+    },
+  },
+
   // FALLBACK — sempre por último. Busca por nome: aceita "buscar X" / "quem é X"
   // explícitos ou query curta que pareça um nome.
   {
