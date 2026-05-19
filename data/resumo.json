@@ -1,51 +1,86 @@
 {
   "ano_base": 2026,
-  "ufrpe": {
-    "sigla": "UFRPE",
-    "n_docentes": 823,
-    "cobertura": {
-      "citacoes": 811,
-      "h_index": 811,
-      "publicacoes": 811
+  "icts": [
+    {
+      "sigla": "UFRPE",
+      "nome": "Universidade Federal Rural de Pernambuco",
+      "color": "#166534",
+      "data_file": "dados_ufrpe.json",
+      "n_docentes": 823,
+      "cobertura": {
+        "citacoes": 811,
+        "h_index": 811,
+        "publicacoes": 811
+      },
+      "totais": {
+        "citacoes": 442886,
+        "publicacoes": 26815
+      },
+      "medias": {
+        "citacoes": 546.1,
+        "h_index": 8.3,
+        "publicacoes": 33.06,
+        "tempo_carreira": 18.3
+      },
+      "max": {
+        "citacoes": 24704,
+        "h_index": 71,
+        "publicacoes": 435
+      }
     },
-    "totais": {
-      "citacoes": 442886,
-      "publicacoes": 26815
+    {
+      "sigla": "UFPE",
+      "nome": "Universidade Federal de Pernambuco",
+      "color": "#1d4ed8",
+      "data_file": "dados_ufpe.json",
+      "n_docentes": 2107,
+      "cobertura": {
+        "citacoes": 0,
+        "h_index": 0,
+        "publicacoes": 1977
+      },
+      "totais": {
+        "citacoes": 0,
+        "publicacoes": 55950
+      },
+      "medias": {
+        "citacoes": null,
+        "h_index": null,
+        "publicacoes": 28.3,
+        "tempo_carreira": 19.4
+      },
+      "max": {
+        "citacoes": null,
+        "h_index": null,
+        "publicacoes": 591
+      }
     },
-    "medias": {
-      "citacoes": 546.1,
-      "h_index": 8.3,
-      "publicacoes": 33.06,
-      "tempo_carreira": 18.3
-    },
-    "max": {
-      "citacoes": 24704,
-      "h_index": 71,
-      "publicacoes": 435
+    {
+      "sigla": "UPE",
+      "nome": "Universidade de Pernambuco",
+      "color": "#7e22ce",
+      "data_file": "dados_upe.json",
+      "n_docentes": 459,
+      "cobertura": {
+        "citacoes": 0,
+        "h_index": 0,
+        "publicacoes": 0
+      },
+      "totais": {
+        "citacoes": 0,
+        "publicacoes": 0
+      },
+      "medias": {
+        "citacoes": null,
+        "h_index": null,
+        "publicacoes": null,
+        "tempo_carreira": 15.6
+      },
+      "max": {
+        "citacoes": null,
+        "h_index": null,
+        "publicacoes": null
+      }
     }
-  },
-  "ufpe": {
-    "sigla": "UFPE",
-    "n_docentes": 2107,
-    "cobertura": {
-      "citacoes": 0,
-      "h_index": 0,
-      "publicacoes": 1977
-    },
-    "totais": {
-      "citacoes": 0,
-      "publicacoes": 55950
-    },
-    "medias": {
-      "citacoes": null,
-      "h_index": null,
-      "publicacoes": 28.3,
-      "tempo_carreira": 19.4
-    },
-    "max": {
-      "citacoes": null,
-      "h_index": null,
-      "publicacoes": 591
-    }
-  }
+  ]
 }

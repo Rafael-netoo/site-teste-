@@ -9,13 +9,8 @@
 
   <style>
     :root {
-      --ufrpe: #14532d;
-      --ufrpe-light: #ecfdf5;
-      --ufrpe-accent: #166534;
-      --ufpe: #1e3a8a;
-      --ufpe-light: #eff6ff;
-      --ufpe-accent: #1d4ed8;
-      --neutral: #475569;
+      --primary: #14532d;
+      --primary-accent: #166534;
       --bg: #f8fafc;
       --text: #1e293b;
       --muted: #64748b;
@@ -46,7 +41,7 @@
     }
     nav.sticky .brand {
       font-weight: 700;
-      color: var(--ufrpe);
+      color: var(--primary);
       font-size: 18px;
     }
     nav.sticky a {
@@ -55,11 +50,11 @@
       font-size: 14px;
       transition: color 0.15s;
     }
-    nav.sticky a:hover { color: var(--ufrpe-accent); }
+    nav.sticky a:hover { color: var(--primary-accent); }
 
     /* ---------- hero ---------- */
     header.hero {
-      background: linear-gradient(135deg, var(--ufrpe) 0%, var(--ufpe) 100%);
+      background: linear-gradient(135deg, var(--primary) 0%, #1e3a8a 50%, #7e22ce 100%);
       color: white;
       padding: 80px 20px;
       text-align: center;
@@ -91,7 +86,7 @@
       border-bottom: 1px solid var(--border);
     }
     section h2 {
-      color: var(--ufrpe);
+      color: var(--primary);
       font-size: 32px;
       margin-bottom: 24px;
       letter-spacing: -0.3px;
@@ -104,7 +99,7 @@
     }
     section p.intro {
       font-size: 17px;
-      color: var(--neutral);
+      color: var(--muted);
       max-width: 900px;
       margin-bottom: 32px;
     }
@@ -134,11 +129,11 @@
       margin-bottom: 8px;
     }
     .pillar h3 {
-      color: var(--ufrpe);
+      color: var(--primary);
       font-size: 22px;
       margin-bottom: 12px;
     }
-    .pillar p { color: var(--neutral); font-size: 15px; }
+    .pillar p { color: var(--muted); font-size: 15px; }
 
     /* ---------- metric cards ---------- */
     .metric-grid {
@@ -157,7 +152,7 @@
     .metric .value {
       font-size: 30px;
       font-weight: 700;
-      color: var(--ufrpe-accent);
+      color: var(--primary-accent);
       line-height: 1.2;
     }
     .metric .label {
@@ -167,12 +162,11 @@
       text-transform: uppercase;
       letter-spacing: 0.3px;
     }
-    .metric.ufpe .value { color: var(--ufpe-accent); }
 
     /* ---------- compare grid ---------- */
     .compare {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 20px;
       margin-top: 24px;
     }
@@ -181,15 +175,18 @@
       border-radius: 12px;
       padding: 24px;
       border: 1px solid var(--border);
-      border-top: 4px solid var(--ufrpe);
+      border-top-width: 4px;
+      border-top-style: solid;
     }
-    .compare-card.ufpe { border-top-color: var(--ufpe); }
     .compare-card h3 {
       font-size: 20px;
-      margin-bottom: 16px;
-      color: var(--ufrpe);
+      margin-bottom: 4px;
     }
-    .compare-card.ufpe h3 { color: var(--ufpe); }
+    .compare-card .nome-completo {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
     .compare-card .row {
       display: flex;
       justify-content: space-between;
@@ -200,7 +197,6 @@
     .compare-card .row:last-child { border-bottom: none; }
     .compare-card .row span:first-child { color: var(--muted); }
     .compare-card .row span:last-child { font-weight: 600; }
-    @media (max-width: 720px) { .compare { grid-template-columns: 1fr; } }
 
     /* ---------- charts ---------- */
     .chart-grid {
@@ -259,14 +255,14 @@
       font-size: 14px;
     }
     th {
-      background: var(--ufrpe);
+      background: var(--primary);
       color: white;
       padding: 12px;
       text-align: left;
       font-weight: 600;
     }
     td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
-    tr:hover { background: var(--ufrpe-light); }
+    tr:hover { background: #f1f5f9; }
     .badge {
       display: inline-block;
       padding: 2px 8px;
@@ -274,9 +270,8 @@
       font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.3px;
+      color: white;
     }
-    .badge.ufrpe { background: var(--ufrpe-light); color: var(--ufrpe-accent); }
-    .badge.ufpe { background: var(--ufpe-light); color: var(--ufpe-accent); }
 
     /* ---------- participate ---------- */
     .participate-grid {
@@ -291,12 +286,12 @@
       padding: 28px;
       border: 1px solid var(--border);
     }
-    .cta h3 { color: var(--ufrpe); margin-bottom: 12px; }
-    .cta p { font-size: 14px; color: var(--neutral); margin-bottom: 16px; }
+    .cta h3 { color: var(--primary); margin-bottom: 12px; }
+    .cta p { font-size: 14px; color: var(--muted); margin-bottom: 16px; }
     .cta a.btn {
       display: inline-block;
       padding: 10px 20px;
-      background: var(--ufrpe);
+      background: var(--primary);
       color: white;
       border-radius: 8px;
       text-decoration: none;
@@ -304,7 +299,17 @@
       font-weight: 600;
       transition: background 0.15s;
     }
-    .cta a.btn:hover { background: var(--ufrpe-accent); }
+    .cta a.btn:hover { background: var(--primary-accent); }
+
+    .note-warn {
+      background: #fefce8;
+      border-left: 4px solid #ca8a04;
+      padding: 14px 18px;
+      border-radius: 8px;
+      margin-top: 20px;
+      font-size: 14px;
+      color: #713f12;
+    }
 
     footer {
       background: var(--text);
@@ -340,7 +345,6 @@
 
 <div class="container">
 
-  <!-- DOMÍNIO -->
   <section id="dominio">
     <h2>Domínio <span class="anchor">o quê</span></h2>
     <p class="intro">
@@ -352,7 +356,6 @@
     <div class="metric-grid" id="metric-grid"></div>
   </section>
 
-  <!-- COMUNIDADE -->
   <section id="comunidade">
     <h2>Comunidade <span class="anchor">quem</span></h2>
     <p class="intro">
@@ -381,7 +384,6 @@
     </div>
   </section>
 
-  <!-- PRÁTICA -->
   <section id="pratica">
     <h2>Prática <span class="anchor">como</span></h2>
     <p class="intro">
@@ -393,74 +395,67 @@
     <div class="chart-grid">
       <div class="chart-card">
         <h4>1. Carreira × Impacto</h4>
-        <p class="chart-desc">Anos desde o doutorado vs índice h (Scopus). Cada ponto é um docente.</p>
+        <p class="chart-desc">Anos desde o doutorado vs índice h. Cada ponto é um docente, colorido pela ICT.</p>
         <div class="chart-wrap"><canvas id="chart-carreira"></canvas></div>
       </div>
 
       <div class="chart-card">
         <h4>2. Top 20 docentes por índice h</h4>
-        <p class="chart-desc">Os 20 maiores h-index combinando ambas as IES.</p>
+        <p class="chart-desc">Maiores h-index combinando as ICTs cobertas.</p>
         <div class="chart-wrap"><canvas id="chart-top20"></canvas></div>
       </div>
 
       <div class="chart-card">
         <h4>3. Impacto médio por categoria</h4>
-        <p class="chart-desc">h-index médio de Permanentes vs Colaboradores por IES.</p>
+        <p class="chart-desc">h-index médio de Permanentes vs Colaboradores por ICT.</p>
         <div class="chart-wrap"><canvas id="chart-categoria"></canvas></div>
       </div>
 
       <div class="chart-card">
         <h4>4. Distribuição de publicações</h4>
-        <p class="chart-desc">Histograma de publicações por docente (faixas).</p>
+        <p class="chart-desc">Histograma de publicações por docente (faixas), por ICT.</p>
         <div class="chart-wrap"><canvas id="chart-publicacoes"></canvas></div>
       </div>
 
       <div class="chart-card">
         <h4>5. Interdisciplinaridade</h4>
-        <p class="chart-desc">Docentes que atuam em mais de um PPG — top 15 por número de programas.</p>
+        <p class="chart-desc">Docentes que atuam em mais de um PPG — top 15.</p>
         <div class="chart-wrap"><canvas id="chart-interdisc"></canvas></div>
       </div>
     </div>
   </section>
 
-  <!-- COMPARAR -->
   <section id="comparar">
-    <h2>UFRPE × UFPE <span class="anchor">comparar</span></h2>
+    <h2>Comparar ICTs <span class="anchor">lado a lado</span></h2>
     <p class="intro">
-      Visão lado a lado das duas IES cobertas pela CoP. As cores acompanham cada
+      Visão lado a lado das ICTs cobertas pela CoP. As cores acompanham cada
       instituição em todos os infográficos.
     </p>
     <div class="compare" id="compare-cards"></div>
-    <div style="background:#fefce8;border-left:4px solid #ca8a04;padding:14px 18px;border-radius:8px;margin-top:20px;font-size:14px;color:#713f12;">
-      <strong>Nota de transparência — Scopus UFPE:</strong> as métricas de
-      <em>citações</em> e <em>h-index</em> aparecem como "—" para a UFPE porque o
-      endpoint Author Retrieval (view METRICS) da Elsevier exige acesso institucional
-      (INSTTOKEN) que o projeto não possui no momento. O número de publicações
-      vem do endpoint Author Search, que é aberto. Detalhes em
-      <a href="https://github.com/gic-ufrpe/oml-cti#fase-2--coleta-scopus" target="_blank">README — Fase 2</a>.
+    <div class="note-warn">
+      <strong>Nota de transparência:</strong> ICTs sem citações/h-index preenchidos
+      indicam que a coleta Scopus (endpoint Author Retrieval, view METRICS) ainda
+      não foi feita — esse endpoint exige acesso institucional (INSTTOKEN) que nem
+      sempre temos. O número de publicações vem do Author Search (aberto). Detalhes
+      em <a href="https://github.com/gerorsch/gic#fase-2--coleta-scopus" target="_blank">README — Fase 2</a>.
     </div>
   </section>
 
-  <!-- BUSCAR -->
   <section id="buscar">
     <h2>Buscar docentes <span class="anchor">unificado</span></h2>
     <p class="intro">
-      Filtre por nome ou por instituição. Métricas vêm da última execução do pipeline
+      Filtre por nome ou por ICT. Métricas vêm da última execução do pipeline
       (CAPES + Scopus).
     </p>
     <div class="search-box">
       <input type="text" id="searchInput" placeholder="Digite o nome do docente...">
-      <select id="ictFilter">
-        <option value="ALL">Todas as IES</option>
-        <option value="UFRPE">Só UFRPE</option>
-        <option value="UFPE">Só UFPE</option>
-      </select>
+      <select id="ictFilter"></select>
     </div>
     <div class="total" id="totalResultados"></div>
     <table>
       <thead>
         <tr>
-          <th>IES</th><th>Nome</th><th>Citações</th><th>H-index</th>
+          <th>ICT</th><th>Nome</th><th>Citações</th><th>H-index</th>
           <th>Publicações</th><th>Tempo</th><th>Impacto/pub</th>
         </tr>
       </thead>
@@ -468,7 +463,6 @@
     </table>
   </section>
 
-  <!-- PARTICIPAR -->
   <section id="participar">
     <h2>Participar <span class="anchor">como contribuir</span></h2>
     <p class="intro">
@@ -479,20 +473,19 @@
       <div class="cta">
         <h3>💬 GitHub Discussions</h3>
         <p>Fórum categorizado: Anúncios, Dúvidas técnicas, Boas práticas e
-        Show-and-tell. Pergunte, responda, compartilhe casos de uso.</p>
-        <a class="btn" href="https://github.com/gic-ufrpe/oml-cti/discussions" target="_blank" rel="noopener">Abrir Discussions</a>
+        Show-and-tell.</p>
+        <a class="btn" href="https://github.com/gerorsch/gic/discussions" target="_blank" rel="noopener">Abrir Discussions</a>
       </div>
       <div class="cta">
         <h3>🐛 Issues</h3>
-        <p>Reporte bugs no pipeline, sugira novas consultas SPARQL ou peça
-        cobertura de outras IES.</p>
-        <a class="btn" href="https://github.com/gic-ufrpe/oml-cti/issues/new/choose" target="_blank" rel="noopener">Abrir Issue</a>
+        <p>Reporte bugs, sugira novas consultas SPARQL ou peça cobertura de outras ICTs.</p>
+        <a class="btn" href="https://github.com/gerorsch/gic/issues/new/choose" target="_blank" rel="noopener">Abrir Issue</a>
       </div>
       <div class="cta">
         <h3>📦 Reusar o pipeline</h3>
         <p>O ETL é parametrizado por ICT — basta uma entrada no script para suportar
         sua instituição.</p>
-        <a class="btn" href="https://github.com/gic-ufrpe/oml-cti" target="_blank" rel="noopener">Ver repositório</a>
+        <a class="btn" href="https://github.com/gerorsch/gic" target="_blank" rel="noopener">Ver repositório</a>
       </div>
     </div>
   </section>
@@ -508,81 +501,87 @@
 </footer>
 
 <script>
-// ============================================================================
-// Carrega os dados e popula tudo
-// ============================================================================
-let dadosUfrpe = [];
-let dadosUfpe = [];
+let icts = [];          // [{sigla, nome, color, data_file, ...agregados}]
+let docentesPorIct = {}; // {UFRPE: [...], UFPE: [...], UPE: [...]}
 let dadosTodos = [];
 let resumo = null;
-
-const COR_UFRPE = '#166534';
-const COR_UFPE  = '#1d4ed8';
+let anoBase = 2026;
 
 async function init() {
-  const [u1, u2, r] = await Promise.all([
-    fetch('data/dados_ufrpe.json').then(r => r.json()),
-    fetch('data/dados_ufpe.json').then(r => r.json()),
-    fetch('data/resumo.json').then(r => r.json()),
-  ]);
-  dadosUfrpe = u1.map(d => ({...d, ict: 'UFRPE'}));
-  dadosUfpe  = u2.map(d => ({...d, ict: 'UFPE'}));
-  dadosTodos = [...dadosUfrpe, ...dadosUfpe];
-  resumo = r;
+  resumo = await fetch('data/resumo.json').then(r => r.json());
+  icts = resumo.icts;
+  anoBase = resumo.ano_base;
+
+  const dadosPorIct = await Promise.all(
+    icts.map(i => fetch('data/' + i.data_file).then(r => r.json()))
+  );
+  icts.forEach((ict, idx) => {
+    const arr = dadosPorIct[idx].map(d => ({...d, ict: ict.sigla}));
+    docentesPorIct[ict.sigla] = arr;
+    dadosTodos.push(...arr);
+  });
 
   renderMetricGrid();
   renderCompareCards();
+  renderFilter();
   renderTabela(dadosTodos);
   renderCharts();
 }
 
-// ---------- métricas agregadas (cards no Domínio) ----------
+function fmt(v) { return v != null ? v.toLocaleString('pt-BR') : '—'; }
+
 function renderMetricGrid() {
-  const totDocentes = (resumo.ufrpe.n_docentes || 0) + (resumo.ufpe.n_docentes || 0);
-  const totCit = (resumo.ufrpe.totais.citacoes || 0) + (resumo.ufpe.totais.citacoes || 0);
-  const totPub = (resumo.ufrpe.totais.publicacoes || 0) + (resumo.ufpe.totais.publicacoes || 0);
-  const html = `
-    <div class="metric"><div class="value">${totDocentes.toLocaleString('pt-BR')}</div><div class="label">Docentes integrados</div></div>
-    <div class="metric"><div class="value">2</div><div class="label">ICTs cobertas</div></div>
-    <div class="metric"><div class="value">${totCit.toLocaleString('pt-BR')}</div><div class="label">Citações Scopus</div></div>
-    <div class="metric"><div class="value">${totPub.toLocaleString('pt-BR')}</div><div class="label">Publicações</div></div>
+  const totDocentes = icts.reduce((s, i) => s + (i.n_docentes || 0), 0);
+  const totCit = icts.reduce((s, i) => s + (i.totais?.citacoes || 0), 0);
+  const totPub = icts.reduce((s, i) => s + (i.totais?.publicacoes || 0), 0);
+  document.getElementById('metric-grid').innerHTML = `
+    <div class="metric"><div class="value">${fmt(totDocentes)}</div><div class="label">Docentes integrados</div></div>
+    <div class="metric"><div class="value">${icts.length}</div><div class="label">ICTs cobertas</div></div>
+    <div class="metric"><div class="value">${fmt(totCit)}</div><div class="label">Citações Scopus</div></div>
+    <div class="metric"><div class="value">${fmt(totPub)}</div><div class="label">Publicações</div></div>
     <div class="metric"><div class="value">5</div><div class="label">Consultas SPARQL</div></div>
   `;
-  document.getElementById('metric-grid').innerHTML = html;
 }
 
-// ---------- cards comparativos ----------
 function renderCompareCards() {
-  const c = (s, cls) => {
-    const f = n => n != null ? n.toLocaleString('pt-BR') : '—';
-    return `
-      <div class="compare-card ${cls}">
-        <h3>${s.sigla}</h3>
-        <div class="row"><span>Docentes</span><span>${f(s.n_docentes)}</span></div>
-        <div class="row"><span>Com citações Scopus</span><span>${f(s.cobertura?.citacoes)}</span></div>
-        <div class="row"><span>Com publicações</span><span>${f(s.cobertura?.publicacoes)}</span></div>
-        <div class="row"><span>Total de citações</span><span>${f(s.totais?.citacoes)}</span></div>
-        <div class="row"><span>Total de publicações</span><span>${f(s.totais?.publicacoes)}</span></div>
-        <div class="row"><span>Média h-index</span><span>${f(s.medias?.h_index)}</span></div>
-        <div class="row"><span>Média de citações</span><span>${f(s.medias?.citacoes)}</span></div>
-        <div class="row"><span>Média de publicações</span><span>${f(s.medias?.publicacoes)}</span></div>
-        <div class="row"><span>Média anos de carreira</span><span>${f(s.medias?.tempo_carreira)}</span></div>
-        <div class="row"><span>Maior h-index</span><span>${f(s.max?.h_index)}</span></div>
-      </div>`;
-  };
-  document.getElementById('compare-cards').innerHTML =
-    c(resumo.ufrpe, '') + c(resumo.ufpe, 'ufpe');
+  document.getElementById('compare-cards').innerHTML = icts.map(i => `
+    <div class="compare-card" style="border-top-color:${i.color}">
+      <h3 style="color:${i.color}">${i.sigla}</h3>
+      <div class="nome-completo">${i.nome}</div>
+      <div class="row"><span>Docentes</span><span>${fmt(i.n_docentes)}</span></div>
+      <div class="row"><span>Com citações Scopus</span><span>${fmt(i.cobertura?.citacoes)}</span></div>
+      <div class="row"><span>Com publicações</span><span>${fmt(i.cobertura?.publicacoes)}</span></div>
+      <div class="row"><span>Total de citações</span><span>${fmt(i.totais?.citacoes)}</span></div>
+      <div class="row"><span>Total de publicações</span><span>${fmt(i.totais?.publicacoes)}</span></div>
+      <div class="row"><span>Média h-index</span><span>${fmt(i.medias?.h_index)}</span></div>
+      <div class="row"><span>Média de citações</span><span>${fmt(i.medias?.citacoes)}</span></div>
+      <div class="row"><span>Média de publicações</span><span>${fmt(i.medias?.publicacoes)}</span></div>
+      <div class="row"><span>Média anos de carreira</span><span>${fmt(i.medias?.tempo_carreira)}</span></div>
+      <div class="row"><span>Maior h-index</span><span>${fmt(i.max?.h_index)}</span></div>
+    </div>
+  `).join('');
 }
 
-// ---------- tabela ----------
+function renderFilter() {
+  const sel = document.getElementById('ictFilter');
+  sel.innerHTML = `<option value="ALL">Todas as ICTs</option>` +
+    icts.map(i => `<option value="${i.sigla}">Só ${i.sigla}</option>`).join('');
+  sel.addEventListener('change', filtrar);
+  document.getElementById('searchInput').addEventListener('keyup', filtrar);
+}
+
+function corDe(sigla) {
+  const i = icts.find(x => x.sigla === sigla);
+  return i ? i.color : '#64748b';
+}
+
 function renderTabela(lista) {
-  const tbody = document.getElementById('tbody');
   document.getElementById('totalResultados').innerText =
     `Total de resultados: ${lista.length.toLocaleString('pt-BR')}`;
-  const fmt = v => v != null ? v.toLocaleString('pt-BR') : '—';
-  tbody.innerHTML = lista.slice(0, 200).map(d => `
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = lista.slice(0, 25).map(d => `
     <tr>
-      <td><span class="badge ${d.ict.toLowerCase()}">${d.ict}</span></td>
+      <td><span class="badge" style="background:${corDe(d.ict)}">${d.ict}</span></td>
       <td>${d.nome || ''}</td>
       <td>${fmt(d.citacoes)}</td>
       <td>${fmt(d.hindex)}</td>
@@ -591,15 +590,12 @@ function renderTabela(lista) {
       <td>${fmt(d.impacto)}</td>
     </tr>
   `).join('');
-  if (lista.length > 200) {
+  if (lista.length > 25) {
     tbody.innerHTML += `<tr><td colspan="7" style="text-align:center;color:var(--muted);font-style:italic;padding:14px;">
-      mostrando os primeiros 200 — refine a busca para ver mais
+      mostrando os primeiros 25 — refine a busca para ver mais
     </td></tr>`;
   }
 }
-
-document.getElementById('searchInput').addEventListener('keyup', filtrar);
-document.getElementById('ictFilter').addEventListener('change', filtrar);
 
 function filtrar() {
   const q = document.getElementById('searchInput').value.toLowerCase();
@@ -612,25 +608,21 @@ function filtrar() {
   renderTabela(filtrados);
 }
 
-// ============================================================================
-// CHARTS (Chart.js)
-// ============================================================================
 function renderCharts() {
   Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
   Chart.defaults.font.size = 12;
 
-  // ---- 1. Scatter: carreira vs h-index ----
-  const pontosUfrpe = dadosUfrpe.filter(d => d.tempo && d.hindex != null)
-    .map(d => ({x: d.tempo, y: d.hindex}));
-  const pontosUfpe = dadosUfpe.filter(d => d.tempo && d.hindex != null)
-    .map(d => ({x: d.tempo, y: d.hindex}));
+  // 1. Scatter: carreira vs h-index (uma série por ICT)
   new Chart(document.getElementById('chart-carreira'), {
     type: 'scatter',
     data: {
-      datasets: [
-        {label: 'UFRPE', data: pontosUfrpe, backgroundColor: COR_UFRPE + '88'},
-        {label: 'UFPE',  data: pontosUfpe,  backgroundColor: COR_UFPE  + '88'},
-      ]
+      datasets: icts.map(ict => ({
+        label: ict.sigla,
+        data: (docentesPorIct[ict.sigla] || [])
+          .filter(d => d.tempo && d.hindex != null)
+          .map(d => ({x: d.tempo, y: d.hindex})),
+        backgroundColor: ict.color + '88',
+      }))
     },
     options: {
       maintainAspectRatio: false,
@@ -641,7 +633,7 @@ function renderCharts() {
     }
   });
 
-  // ---- 2. Top 20 h-index ----
+  // 2. Top 20 h-index (cor por ICT)
   const top20 = [...dadosTodos]
     .filter(d => d.hindex != null)
     .sort((a, b) => b.hindex - a.hindex)
@@ -653,7 +645,7 @@ function renderCharts() {
       datasets: [{
         label: 'h-index',
         data: top20.map(d => d.hindex),
-        backgroundColor: top20.map(d => d.ict === 'UFRPE' ? COR_UFRPE : COR_UFPE),
+        backgroundColor: top20.map(d => corDe(d.ict)),
       }]
     },
     options: {
@@ -664,7 +656,7 @@ function renderCharts() {
     }
   });
 
-  // ---- 3. Perm vs Colab por IES (média h-index) ----
+  // 3. Perm vs Colab por ICT (média h-index)
   const mediaPorCat = (lista, cat) => {
     const xs = lista.filter(d => d.categoria === cat && d.hindex != null).map(d => d.hindex);
     return xs.length ? +(xs.reduce((a, b) => a + b, 0) / xs.length).toFixed(2) : 0;
@@ -673,10 +665,11 @@ function renderCharts() {
     type: 'bar',
     data: {
       labels: ['PERMANENTE', 'COLABORADOR'],
-      datasets: [
-        {label: 'UFRPE', data: ['PERMANENTE', 'COLABORADOR'].map(c => mediaPorCat(dadosUfrpe, c)), backgroundColor: COR_UFRPE},
-        {label: 'UFPE',  data: ['PERMANENTE', 'COLABORADOR'].map(c => mediaPorCat(dadosUfpe,  c)), backgroundColor: COR_UFPE},
-      ]
+      datasets: icts.map(ict => ({
+        label: ict.sigla,
+        data: ['PERMANENTE', 'COLABORADOR'].map(c => mediaPorCat(docentesPorIct[ict.sigla] || [], c)),
+        backgroundColor: ict.color,
+      }))
     },
     options: {
       maintainAspectRatio: false,
@@ -684,10 +677,10 @@ function renderCharts() {
     }
   });
 
-  // ---- 4. Histograma de publicações ----
+  // 4. Histograma de publicações
   const bins = [0, 5, 10, 25, 50, 100, 250, 500, Infinity];
   const binLabels = ['0-4', '5-9', '10-24', '25-49', '50-99', '100-249', '250-499', '500+'];
-  const hist = (lista) => {
+  const hist = lista => {
     const c = new Array(binLabels.length).fill(0);
     lista.forEach(d => {
       const v = d.publicacoes;
@@ -702,10 +695,11 @@ function renderCharts() {
     type: 'bar',
     data: {
       labels: binLabels,
-      datasets: [
-        {label: 'UFRPE', data: hist(dadosUfrpe), backgroundColor: COR_UFRPE},
-        {label: 'UFPE',  data: hist(dadosUfpe),  backgroundColor: COR_UFPE},
-      ]
+      datasets: icts.map(ict => ({
+        label: ict.sigla,
+        data: hist(docentesPorIct[ict.sigla] || []),
+        backgroundColor: ict.color,
+      }))
     },
     options: {
       maintainAspectRatio: false,
@@ -716,7 +710,7 @@ function renderCharts() {
     }
   });
 
-  // ---- 5. Top interdisciplinaridade ----
+  // 5. Top interdisciplinaridade
   const top15 = [...dadosTodos]
     .filter(d => (d.num_ppgs || 0) >= 2)
     .sort((a, b) => (b.num_ppgs - a.num_ppgs) || ((b.hindex || 0) - (a.hindex || 0)))
@@ -728,7 +722,7 @@ function renderCharts() {
       datasets: [{
         label: 'PPGs distintos',
         data: top15.map(d => d.num_ppgs),
-        backgroundColor: top15.map(d => d.ict === 'UFRPE' ? COR_UFRPE : COR_UFPE),
+        backgroundColor: top15.map(d => corDe(d.ict)),
       }]
     },
     options: {
@@ -740,7 +734,7 @@ function renderCharts() {
   });
 }
 
-init().catch(err => console.error('Erro ao inicializar:', err));
+init().catch(err => console.error('Erro:', err));
 </script>
 
 </body>
