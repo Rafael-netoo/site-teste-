@@ -297,23 +297,93 @@
       height: 320px;
     }
 
-    /* ---------- search ---------- */
-    .search-box { margin-bottom: 20px; display: flex; gap: 12px; flex-wrap: wrap; }
-    .search-box input {
+    /* ---------- perguntar (NL→SPARQL) ---------- */
+    .nl-box {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-bottom: 18px;
+    }
+    .nl-box label.nl-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .nl-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .nl-row input {
       flex: 1;
-      min-width: 240px;
-      padding: 12px 16px;
+      min-width: 280px;
+      padding: 11px 16px;
       border-radius: 8px;
       border: 1px solid var(--border);
       font-size: 15px;
     }
-    .search-box select {
-      padding: 12px 16px;
+    .nl-row button {
+      padding: 11px 22px;
       border-radius: 8px;
+      border: 1px solid var(--primary);
+      background: var(--primary);
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .nl-row button:hover:not(:disabled) { background: var(--primary-accent); }
+    .nl-row button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .chips { margin-top: 12px; }
+    .chips-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+    .chip {
+      display: inline-block;
+      padding: 4px 12px;
+      margin: 4px 6px 4px 0;
+      border-radius: 16px;
       border: 1px solid var(--border);
       background: white;
-      font-size: 14px;
+      font-size: 12px;
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
     }
+    .chip:hover { background: var(--primary); color: white; border-color: var(--primary); }
+    .sparql-pane {
+      margin: 14px 0;
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 14px 18px;
+      border-radius: 8px;
+      font-family: "SF Mono", Menlo, Consolas, monospace;
+      font-size: 12px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+    .sparql-pane[hidden] { display: none; }
+    .sparql-toggle {
+      background: none;
+      border: none;
+      color: var(--primary);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 0;
+      margin-top: 8px;
+    }
+    .sparql-toggle:hover { text-decoration: underline; }
+    .engine-status {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+    .engine-status.ok    { color: var(--primary-accent); }
+    .engine-status.err   { color: #b91c1c; }
+    .query-meta { font-size: 13px; color: var(--muted); margin: 12px 0 8px; }
+    .query-meta strong { color: var(--text); }
+    .query-meta.err { color: #b91c1c; }
     .total { color: var(--muted); font-size: 14px; margin-bottom: 12px; }
 
     table {
@@ -401,7 +471,7 @@
   <a href="#comunidade">Comunidade</a>
   <a href="#pratica">Prática</a>
   <a href="#comparar">Comparar</a>
-  <a href="#buscar">Buscar</a>
+  <a href="#perguntar">Perguntar</a>
   <a href="#participar">Participar</a>
 </nav>
 
@@ -511,26 +581,32 @@
     </div>
   </section>
 
-  <section id="buscar">
-    <h2>Buscar docentes <span class="anchor">unificado</span></h2>
+  <section id="perguntar">
+    <h2>Perguntar <span class="anchor">linguagem natural → SPARQL</span></h2>
     <p class="intro">
-      Filtre por nome ou por ICT. Métricas vêm da última execução do pipeline
-      (CAPES + Scopus).
+      Pergunte em português sobre os docentes, PPGs e métricas. A pergunta é
+      mapeada pra uma consulta <strong>SPARQL</strong> executada localmente no
+      navegador via <a href="https://github.com/oxigraph/oxigraph" target="_blank" rel="noopener">Oxigraph</a>
+      (WASM) sobre o grafo RDF gerado pelo pipeline OML. Use também pra buscar
+      docentes por nome.
     </p>
-    <div class="search-box">
-      <input type="text" id="searchInput" placeholder="Digite o nome do docente...">
-      <select id="ictFilter"></select>
+
+    <div class="nl-box">
+      <label class="nl-label" for="question">Pergunte ou busque</label>
+      <div class="nl-row">
+        <input id="question" type="text"
+               placeholder="ex.: top 10 da UFRPE por h-index   ·   MARTINELLI   ·   permanentes vs colaboradores"
+               disabled>
+        <button id="ask" disabled>Perguntar</button>
+      </div>
+      <div id="suggestions" class="chips"></div>
+      <div id="engine-status" class="engine-status">Engine SPARQL será carregada em segundo plano…</div>
+      <button id="sparql-toggle" class="sparql-toggle" hidden>Mostrar SPARQL gerado ▾</button>
+      <pre id="sparql-pane" class="sparql-pane" hidden></pre>
     </div>
-    <div class="total" id="totalResultados"></div>
-    <table>
-      <thead>
-        <tr>
-          <th>ICT</th><th>Nome</th><th>Citações</th><th>H-index</th>
-          <th>Publicações</th><th>Tempo</th><th>Impacto/pub</th>
-        </tr>
-      </thead>
-      <tbody id="tbody"></tbody>
-    </table>
+
+    <div id="query-meta" class="query-meta"></div>
+    <div id="results-wrap"></div>
   </section>
 
   <section id="participar">
@@ -602,8 +678,6 @@ async function init() {
 
   renderMetricGrid();
   renderCompareCards();
-  renderFilter();
-  renderTabela(dadosTodos);
   renderCharts();
 }
 
@@ -641,50 +715,9 @@ function renderCompareCards() {
   `).join('');
 }
 
-function renderFilter() {
-  const sel = document.getElementById('ictFilter');
-  sel.innerHTML = `<option value="ALL">Todas as ICTs</option>` +
-    icts.map(i => `<option value="${i.sigla}">Só ${i.sigla}</option>`).join('');
-  sel.addEventListener('change', filtrar);
-  document.getElementById('searchInput').addEventListener('keyup', filtrar);
-}
-
 function corDe(sigla) {
   const i = icts.find(x => x.sigla === sigla);
   return i ? i.color : '#64748b';
-}
-
-function renderTabela(lista) {
-  document.getElementById('totalResultados').innerText =
-    `Total de resultados: ${lista.length.toLocaleString('pt-BR')}`;
-  const tbody = document.getElementById('tbody');
-  tbody.innerHTML = lista.slice(0, 25).map(d => `
-    <tr>
-      <td><span class="badge" style="background:${corDe(d.ict)}">${d.ict}</span></td>
-      <td>${d.nome || ''}</td>
-      <td>${fmt(d.citacoes)}</td>
-      <td>${fmt(d.hindex)}</td>
-      <td>${fmt(d.publicacoes)}</td>
-      <td>${fmt(d.tempo)}</td>
-      <td>${fmt(d.impacto)}</td>
-    </tr>
-  `).join('');
-  if (lista.length > 25) {
-    tbody.innerHTML += `<tr><td colspan="7" style="text-align:center;color:var(--muted);font-style:italic;padding:14px;">
-      mostrando os primeiros 25 — refine a busca para ver mais
-    </td></tr>`;
-  }
-}
-
-function filtrar() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  const ict = document.getElementById('ictFilter').value;
-  const filtrados = dadosTodos.filter(d => {
-    const okIct = ict === 'ALL' || d.ict === ict;
-    const okNome = !q || (d.nome && d.nome.toLowerCase().includes(q));
-    return okIct && okNome;
-  });
-  renderTabela(filtrados);
 }
 
 // chartBuilders[chartCanvasId] = () => Chart.js config object
@@ -882,6 +915,216 @@ document.addEventListener('keydown', e => {
 });
 
 init().catch(err => console.error('Erro:', err));
+</script>
+
+<script type="module">
+import init, { Store } from 'https://cdn.jsdelivr.net/npm/oxigraph@0.4/+esm';
+import { matchQuestion, listIntents } from './js/templates.js';
+
+const $ = id => document.getElementById(id);
+const FORBIDDEN_RE = /\b(INSERT|DELETE|LOAD|CLEAR|DROP|CREATE|COPY|MOVE|ADD|SERVICE)\b/i;
+
+let store = null;
+let ready = false;
+
+function setStatus(el, msg, kind) {
+  el.textContent = msg;
+  el.className = 'engine-status' + (kind ? ' ' + kind : '');
+}
+
+async function bootSparql() {
+  const statusEl = $('engine-status');
+  try {
+    const t0 = performance.now();
+    setStatus(statusEl, 'Carregando engine SPARQL (WASM)…');
+    await init();
+    setStatus(statusEl, `Engine pronta (${(performance.now() - t0).toFixed(0)} ms). Baixando grafo…`);
+
+    const ttl = await fetch('data/grafo.ttl').then(r => {
+      if (!r.ok) throw new Error(`grafo.ttl: HTTP ${r.status}`);
+      return r.text();
+    });
+    setStatus(statusEl, `Grafo baixado (${(ttl.length / 1024).toFixed(0)} KB). Parseando…`);
+
+    store = new Store();
+    store.load(ttl, { format: 'text/turtle' });
+    const dt = performance.now() - t0;
+    setStatus(statusEl,
+      `Pronto — ${store.size.toLocaleString('pt-BR')} triplas (${(dt / 1000).toFixed(1)} s).`,
+      'ok');
+
+    ready = true;
+    $('question').disabled = false;
+    $('ask').disabled = false;
+    renderSuggestions();
+  } catch (e) {
+    setStatus(statusEl, `Erro carregando engine: ${e.message || e}`, 'err');
+    console.error(e);
+  }
+}
+
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function fmtTerm(term) {
+  if (!term) return '';
+  if (term.termType === 'Literal') {
+    const dt = term.datatype && term.datatype.value;
+    if (dt && /(integer|decimal|double|float)/.test(dt)) {
+      const n = Number(term.value);
+      return Number.isInteger(n) ? n.toLocaleString('pt-BR') : n.toFixed(2);
+    }
+    return term.value;
+  }
+  if (term.termType === 'NamedNode') {
+    return term.value.split(/[#/]/).pop() || term.value;
+  }
+  return term.value;
+}
+
+function isNumeric(term) {
+  if (!term || term.termType !== 'Literal') return false;
+  const dt = term.datatype && term.datatype.value;
+  return !!dt && /(integer|decimal|double|float)/.test(dt);
+}
+
+function renderResults(rows) {
+  const wrap = $('results-wrap');
+  if (!Array.isArray(rows)) {
+    wrap.innerHTML =
+      `<div class="total">Resultado: <code>${escapeHtml(String(rows))}</code></div>`;
+    return;
+  }
+  if (rows.length === 0) {
+    wrap.innerHTML = `<div class="total">Nenhum resultado.</div>`;
+    return;
+  }
+  const vars = Array.from(rows[0].keys());
+  const numericCols = new Set(
+    vars.filter(v => rows.every(r => !r.get(v) || isNumeric(r.get(v))))
+  );
+
+  // Coluna "sigla_ict" / "ict" recebe badge colorido (estilo Comparar/etc).
+  const ictCol = vars.find(v => /sigla.*ict|^ict$/i.test(v));
+
+  const head = vars.map(v => `<th>${escapeHtml(v)}</th>`).join('');
+  const MAX = 200;
+  const body = rows.slice(0, MAX).map(r => {
+    const tds = vars.map(v => {
+      const t = r.get(v);
+      if (v === ictCol && t) {
+        const sg = String(t.value);
+        return `<td><span class="badge" style="background:${corDe(sg)}">${escapeHtml(sg)}</span></td>`;
+      }
+      const cls = numericCols.has(v) ? ' style="text-align:right;font-variant-numeric:tabular-nums;"' : '';
+      return `<td${cls}>${escapeHtml(fmtTerm(t))}</td>`;
+    }).join('');
+    return `<tr>${tds}</tr>`;
+  }).join('');
+  let html = `<table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
+  if (rows.length > MAX) {
+    html += `<div class="total" style="margin-top:8px;">mostrando os primeiros ${MAX} de ${rows.length.toLocaleString('pt-BR')} — refine a pergunta para ver menos</div>`;
+  }
+  wrap.innerHTML = html;
+}
+
+function renderSuggestions() {
+  const sugEl = $('suggestions');
+  const intents = listIntents();
+  const chips = intents.map(i =>
+    `<span class="chip" data-q="${escapeHtml(i.examples[0])}" title="${escapeHtml(i.title)}">${escapeHtml(i.examples[0])}</span>`
+  ).join('');
+  sugEl.innerHTML = `<div class="chips-label">Sugestões (clique pra preencher):</div>${chips}`;
+  sugEl.querySelectorAll('.chip').forEach(c => {
+    c.addEventListener('click', () => {
+      $('question').value = c.dataset.q;
+      askNL();
+    });
+  });
+}
+
+function showSparql(q) {
+  const pane = $('sparql-pane');
+  const toggle = $('sparql-toggle');
+  pane.textContent = q;
+  toggle.hidden = false;
+  toggle.textContent = pane.hidden ? 'Mostrar SPARQL gerado ▾' : 'Esconder SPARQL gerado ▴';
+}
+
+function runSparql(q) {
+  const metaEl = $('query-meta');
+  if (FORBIDDEN_RE.test(q.replace(/#[^\n]*/g, ''))) {
+    metaEl.textContent = 'Bloqueado: queries de modificação não são permitidas.';
+    metaEl.className = 'query-meta err';
+    return;
+  }
+  try {
+    const t0 = performance.now();
+    const rows = store.query(q);
+    const dt = performance.now() - t0;
+    const n = Array.isArray(rows) ? rows.length : 1;
+    metaEl.innerHTML =
+      `<strong>${n.toLocaleString('pt-BR')}</strong> resultado(s) em <strong>${dt.toFixed(0)} ms</strong>.`;
+    metaEl.className = 'query-meta';
+    renderResults(rows);
+  } catch (e) {
+    metaEl.textContent = `Erro: ${e.message || e}`;
+    metaEl.className = 'query-meta err';
+    $('results-wrap').innerHTML = '';
+  }
+}
+
+function askNL() {
+  if (!ready) return;
+  const q = $('question').value.trim();
+  if (!q) return;
+
+  const m = matchQuestion(q);
+  if (!m) {
+    const metaEl = $('query-meta');
+    metaEl.innerHTML = `Não consegui mapear <em>"${escapeHtml(q)}"</em> a uma consulta. Tente uma das sugestões abaixo.`;
+    metaEl.className = 'query-meta err';
+    $('results-wrap').innerHTML = '';
+    $('sparql-pane').hidden = true;
+    $('sparql-toggle').hidden = true;
+    return;
+  }
+
+  const sparql = m.intent.build({ slots: m.slots });
+  showSparql(sparql);
+  const slotInfo = Object.entries(m.slots)
+    .filter(([, v]) => v != null && v !== '')
+    .map(([k, v]) => `${k}=${v}`).join(', ');
+  const metaEl = $('query-meta');
+  metaEl.innerHTML =
+    `Intent: <strong>${escapeHtml(m.intent.title)}</strong>` +
+    (slotInfo ? ` <em style="color:var(--muted)">(${escapeHtml(slotInfo)})</em>` : '') +
+    `. Executando…`;
+  metaEl.className = 'query-meta';
+  requestAnimationFrame(() => runSparql(sparql));
+}
+
+$('ask').addEventListener('click', askNL);
+$('question').addEventListener('keydown', e => {
+  if (e.key === 'Enter') { e.preventDefault(); askNL(); }
+});
+$('sparql-toggle').addEventListener('click', () => {
+  const pane = $('sparql-pane');
+  pane.hidden = !pane.hidden;
+  $('sparql-toggle').textContent = pane.hidden ? 'Mostrar SPARQL gerado ▾' : 'Esconder SPARQL gerado ▴';
+});
+
+// Eager-background: agenda o boot depois do load principal.
+window.addEventListener('load', () => {
+  const start = () => bootSparql().catch(e => console.error('bootSparql:', e));
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(start, { timeout: 2000 });
+  } else {
+    setTimeout(start, 300);
+  }
+});
 </script>
 
 </body>
