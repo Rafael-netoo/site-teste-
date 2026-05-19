@@ -1,0 +1,51 @@
+{
+  "ano_base": 2026,
+  "ufrpe": {
+    "sigla": "UFRPE",
+    "n_docentes": 823,
+    "cobertura": {
+      "citacoes": 811,
+      "h_index": 811,
+      "publicacoes": 811
+    },
+    "totais": {
+      "citacoes": 442886,
+      "publicacoes": 26815
+    },
+    "medias": {
+      "citacoes": 546.1,
+      "h_index": 8.3,
+      "publicacoes": 33.06,
+      "tempo_carreira": 18.3
+    },
+    "max": {
+      "citacoes": 24704,
+      "h_index": 71,
+      "publicacoes": 435
+    }
+  },
+  "ufpe": {
+    "sigla": "UFPE",
+    "n_docentes": 2107,
+    "cobertura": {
+      "citacoes": 0,
+      "h_index": 0,
+      "publicacoes": 1977
+    },
+    "totais": {
+      "citacoes": 0,
+      "publicacoes": 55950
+    },
+    "medias": {
+      "citacoes": null,
+      "h_index": null,
+      "publicacoes": 28.3,
+      "tempo_carreira": 19.4
+    },
+    "max": {
+      "citacoes": null,
+      "h_index": null,
+      "publicacoes": 591
+    }
+  }
+}
