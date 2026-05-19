@@ -210,7 +210,78 @@
       border-radius: 12px;
       padding: 24px;
       border: 1px solid var(--border);
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      position: relative;
     }
+    .chart-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+    .chart-card::after {
+      content: "⤢";
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      color: var(--muted);
+      font-size: 18px;
+      opacity: 0.5;
+    }
+    .chart-card:hover::after { opacity: 1; }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.75);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .modal.open { display: flex; }
+    .modal-content {
+      background: white;
+      border-radius: 14px;
+      padding: 32px;
+      width: 100%;
+      max-width: 1100px;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      background: transparent;
+      border: none;
+      font-size: 28px;
+      color: var(--muted);
+      cursor: pointer;
+      line-height: 1;
+      padding: 4px 10px;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal-content h3 {
+      font-size: 22px;
+      color: var(--primary);
+      margin-bottom: 8px;
+      padding-right: 40px;
+    }
+    .modal-content .modal-desc {
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    .modal-chart {
+      flex: 1;
+      min-height: 0;
+      position: relative;
+    }
+    .modal-chart canvas { max-height: 70vh; }
     .chart-card h4 {
       color: var(--text);
       font-size: 17px;
@@ -491,6 +562,15 @@
 
 </div>
 
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeModal()" aria-label="Fechar">&times;</button>
+    <h3 id="modal-title"></h3>
+    <p class="modal-desc" id="modal-desc"></p>
+    <div class="modal-chart"><canvas id="modal-canvas"></canvas></div>
+  </div>
+</div>
+
 <footer>
   <p>
     Projeto desenvolvido para a disciplina <strong>Gestão da Informação e do Conhecimento</strong>
@@ -607,12 +687,34 @@ function filtrar() {
   renderTabela(filtrados);
 }
 
-function renderCharts() {
-  Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
-  Chart.defaults.font.size = 12;
+// chartBuilders[chartCanvasId] = () => Chart.js config object
+// Recriamos a partir das funções pra evitar mutar a mesma config em 2 charts
+const chartBuilders = {};
+let modalChart = null;
 
-  // 1. Scatter: carreira vs h-index (uma série por ICT)
-  new Chart(document.getElementById('chart-carreira'), {
+// Calcula um "nice ceiling" determinístico — garante que o modal e o card
+// usem o mesmo max no eixo, independente do tamanho do canvas.
+function niceMax(v) {
+  if (v <= 0) return 1;
+  if (v <= 5) return 5;
+  if (v <= 10) return 10;
+  const m = Math.pow(10, Math.floor(Math.log10(v)));
+  for (const k of [1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10]) {
+    if (v <= k * m) return Math.round(k * m);
+  }
+  return 10 * m;
+}
+
+function buildChartConfigs() {
+  const scatterPts = icts.flatMap(ict =>
+    (docentesPorIct[ict.sigla] || [])
+      .filter(d => d.tempo && d.hindex != null)
+      .map(d => ({x: d.tempo, y: d.hindex}))
+  );
+  const maxTempo = scatterPts.length ? Math.max(...scatterPts.map(p => p.x)) : 1;
+  const maxHCarreira = scatterPts.length ? Math.max(...scatterPts.map(p => p.y)) : 1;
+
+  chartBuilders['chart-carreira'] = () => ({
     type: 'scatter',
     data: {
       datasets: icts.map(ict => ({
@@ -626,18 +728,15 @@ function renderCharts() {
     options: {
       maintainAspectRatio: false,
       scales: {
-        x: { title: { display: true, text: 'Anos desde o doutorado' } },
-        y: { title: { display: true, text: 'h-index' } }
+        x: { min: 0, max: niceMax(maxTempo), title: { display: true, text: 'Anos desde o doutorado' } },
+        y: { min: 0, max: niceMax(maxHCarreira), title: { display: true, text: 'h-index' } }
       }
     }
   });
 
-  // 2. Top 20 h-index (cor por ICT)
-  const top20 = [...dadosTodos]
-    .filter(d => d.hindex != null)
-    .sort((a, b) => b.hindex - a.hindex)
-    .slice(0, 20);
-  new Chart(document.getElementById('chart-top20'), {
+  const top20 = [...dadosTodos].filter(d => d.hindex != null).sort((a, b) => b.hindex - a.hindex).slice(0, 20);
+  const maxTop20 = top20.length ? top20[0].hindex : 1;
+  chartBuilders['chart-top20'] = () => ({
     type: 'bar',
     data: {
       labels: top20.map(d => d.nome.length > 28 ? d.nome.slice(0, 26) + '…' : d.nome),
@@ -651,16 +750,19 @@ function renderCharts() {
       indexAxis: 'y',
       maintainAspectRatio: false,
       plugins: { legend: { display: false } },
-      scales: { x: { title: { display: true, text: 'h-index' } } }
+      scales: { x: { min: 0, max: niceMax(maxTop20), title: { display: true, text: 'h-index' } } }
     }
   });
 
-  // 3. Perm vs Colab por ICT (média h-index)
   const mediaPorCat = (lista, cat) => {
     const xs = lista.filter(d => d.categoria === cat && d.hindex != null).map(d => d.hindex);
     return xs.length ? +(xs.reduce((a, b) => a + b, 0) / xs.length).toFixed(2) : 0;
   };
-  new Chart(document.getElementById('chart-categoria'), {
+  const allMediasCat = icts.flatMap(ict =>
+    ['PERMANENTE', 'COLABORADOR'].map(c => mediaPorCat(docentesPorIct[ict.sigla] || [], c))
+  );
+  const maxMediaCat = allMediasCat.length ? Math.max(...allMediasCat) : 1;
+  chartBuilders['chart-categoria'] = () => ({
     type: 'bar',
     data: {
       labels: ['PERMANENTE', 'COLABORADOR'],
@@ -672,11 +774,10 @@ function renderCharts() {
     },
     options: {
       maintainAspectRatio: false,
-      scales: { y: { title: { display: true, text: 'média de h-index' } } }
+      scales: { y: { min: 0, max: niceMax(maxMediaCat), title: { display: true, text: 'média de h-index' } } }
     }
   });
 
-  // 4. Histograma de publicações
   const bins = [0, 5, 10, 25, 50, 100, 250, 500, Infinity];
   const binLabels = ['0-4', '5-9', '10-24', '25-49', '50-99', '100-249', '250-499', '500+'];
   const hist = lista => {
@@ -690,7 +791,9 @@ function renderCharts() {
     });
     return c;
   };
-  new Chart(document.getElementById('chart-publicacoes'), {
+  const allHist = icts.flatMap(ict => hist(docentesPorIct[ict.sigla] || []));
+  const maxHist = allHist.length ? Math.max(...allHist) : 1;
+  chartBuilders['chart-publicacoes'] = () => ({
     type: 'bar',
     data: {
       labels: binLabels,
@@ -704,17 +807,17 @@ function renderCharts() {
       maintainAspectRatio: false,
       scales: {
         x: { title: { display: true, text: 'publicações por docente (faixa)' } },
-        y: { title: { display: true, text: 'docentes' } }
+        y: { min: 0, max: niceMax(maxHist), title: { display: true, text: 'docentes' } }
       }
     }
   });
 
-  // 5. Top interdisciplinaridade
   const top15 = [...dadosTodos]
     .filter(d => (d.num_ppgs || 0) >= 2)
     .sort((a, b) => (b.num_ppgs - a.num_ppgs) || ((b.hindex || 0) - (a.hindex || 0)))
     .slice(0, 15);
-  new Chart(document.getElementById('chart-interdisc'), {
+  const maxPpgs = top15.length ? top15[0].num_ppgs : 1;
+  chartBuilders['chart-interdisc'] = () => ({
     type: 'bar',
     data: {
       labels: top15.map(d => d.nome.length > 28 ? d.nome.slice(0, 26) + '…' : d.nome),
@@ -728,10 +831,55 @@ function renderCharts() {
       indexAxis: 'y',
       maintainAspectRatio: false,
       plugins: { legend: { display: false } },
-      scales: { x: { title: { display: true, text: 'número de PPGs' }, ticks: { stepSize: 1 } } }
+      scales: { x: { min: 0, max: maxPpgs, title: { display: true, text: 'número de PPGs' }, ticks: { stepSize: 1 } } }
     }
   });
 }
+
+function renderCharts() {
+  Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+  Chart.defaults.font.size = 12;
+
+  buildChartConfigs();
+
+  for (const [id, builder] of Object.entries(chartBuilders)) {
+    new Chart(document.getElementById(id), builder());
+  }
+
+  // Clique no card abre o modal
+  document.querySelectorAll('.chart-card').forEach(card => {
+    const canvas = card.querySelector('canvas');
+    if (!canvas) return;
+    card.addEventListener('click', () => openModal(canvas.id, card));
+  });
+}
+
+function openModal(chartId, card) {
+  const builder = chartBuilders[chartId];
+  if (!builder) return;
+  const titulo = card.querySelector('h4')?.textContent || '';
+  const desc = card.querySelector('.chart-desc')?.textContent || '';
+  document.getElementById('modal-title').textContent = titulo;
+  document.getElementById('modal-desc').textContent = desc;
+  const modal = document.getElementById('modal');
+  modal.classList.add('open');
+
+  // Destrói chart anterior (se houver) e cria novo no canvas do modal
+  if (modalChart) modalChart.destroy();
+  modalChart = new Chart(document.getElementById('modal-canvas'), builder());
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  if (modalChart) { modalChart.destroy(); modalChart = null; }
+}
+
+document.getElementById('modal').addEventListener('click', e => {
+  if (e.target.id === 'modal') closeModal();
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
 
 init().catch(err => console.error('Erro:', err));
 </script>
